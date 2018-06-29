@@ -3,30 +3,42 @@
       xmlns:v-on="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My blog</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
           integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-            crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
-            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
-            crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"
-            integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
-            crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
     <script src="https://unpkg.com/ionicons@4.2.2/dist/ionicons.js"></script>
-    <link rel="stylesheet" href="css/style.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 </head>
 <body>
 <div class="wrapper">
-    <div class="sample">
-        <input type="text" v-bind:value="name" v-on:input=
-                "name = $event.target.value">
+    <div class="sample col-12 my-2">
+        <button type="button"
+                class="btn btn-outline-primary"
+                v-on:click="showH2 = !showH2"
+                v-bind:title="showH2 ? 'Hide' : 'Show'">
+            Toggle Header
+        </button>
+        <!--v-on:click имеет сокращенную форму записи @click-->
+        <!--v-bind:title имеет сокращенную форму записи :title-->
         <hr>
-        <h2>Учим Vue.JS, {{ name }}</h2>
+        <h2 v-show="showH2">V-Show Testing</h2>
+        <hr>
+        <button type="button"
+                class="btn btn-outline-success"
+                v-on:click="numbers.push(Math.random())">
+            Add number
+        </button>
+        <hr>
+        <ul class="list-group">
+            <li class="list-group-item"
+            v-for="number in numbers">
+                {{ number }}
+            </li>
+        </ul>
     </div>
 </div>
 
@@ -34,9 +46,11 @@
     new Vue({
         el: '.sample',
         data: {
-            name: '5454545'
+            showH2: false,
+            numbers: []
         }
     });
 </script>
+
 </body>
 </html>
