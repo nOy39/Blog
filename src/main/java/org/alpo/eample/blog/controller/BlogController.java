@@ -3,15 +3,13 @@ package org.alpo.eample.blog.controller;
 import org.alpo.eample.blog.entity.Post;
 import org.alpo.eample.blog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @RestController
+@RequestMapping(value = "blog")
 public class BlogController {
 
     private final PostService postService;
@@ -21,21 +19,18 @@ public class BlogController {
         this.postService = postService;
     }
 
-    @GetMapping(value = "/")
-    public String index() {
-        return "index";
-    }
-
-    @GetMapping(value = "/posts")
+    @GetMapping(value = "/bears")
     public List<Post> posts() {
+        List<Post> messages = postService.getAllPost();
         return postService.getAllPost();
     }
 
-    @PostMapping(value = "/post")
+    @PostMapping(value = "/bears")
     public void publishPost(@RequestBody Post post) {
         if (post.getDate() == null) {
             post.setDate(LocalDate.now());
         }
         postService.insert(post);
     }
+
 }
