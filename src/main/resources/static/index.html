@@ -10,8 +10,29 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
     <script src="https://unpkg.com/ionicons@4.2.2/dist/ionicons.js"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+            crossorigin="anonymous"></script>
+    <style>
+        .slide-enter {
+            opacity: 0;
+        }
+
+        .slide-enter-active {
+            transition: opacity 1s;
+        }
+
+        .slide-leave-active {
+            transition: opacity 1s;
+        }
+
+        .slide-leave-to {
+            opacity: 0;
+        }
+    </style>
 </head>
 <body>
 <div class="wrapper">
@@ -25,11 +46,18 @@
         <!--v-on:click имеет сокращенную форму записи @click-->
         <!--v-bind:title имеет сокращенную форму записи :title-->
         <hr>
-        <h2 v-show="showH2">Your profit: {{ sum }}</h2>
+        <app-progress v-bind:val="sum" v-bind:max="maxNumbers*5"></app-progress>
+        <transition name="slide">
+
+            <h2 v-show="showH2" class="alert alert-success">Your profit: {{ sum }}</h2>
+        </transition>
+        <hr>
+        <app-progress v-bind:val="numbers.length" v-bind:max="maxNumbers"></app-progress>
         <hr>
         <button type="button"
                 class="btn btn-outline-success"
-                v-on:click="addNumber">
+                v-on:click="addNumber"
+                v-bind:disabled="done">
             Add number
         </button>
         <hr>
@@ -43,16 +71,45 @@
 </div>
 
 <script>
-    new Vue({
+    Vue.component('app-progress', {
+        props: {
+            max: Number,
+            val: Number
+        },
+        computed: {
+            width() {
+                let w = this.val / this.max * 100;
+                if (w > 100) {
+                    w = 100;
+                } else if (w < 0) {
+                    w = 0;
+                }
+                return {
+                    width: w + '%'
+                }
+            }
+        },
+        template: `
+        <div class="progress">
+            <div class="progress-bar" v-bind:style="width"></div>
+        </div>`
+
+    });
+
+    let sample = new Vue({
         el: '.sample',
         data: {
             showH2: true,
-            numbers: []
+            numbers: [],
+            maxNumbers: 10,
+            valSum: 0
         },
         methods: {
             addNumber() {
+                if (!this.done) {
                 let rnd = Math.floor(Math.random() * 11) - 5;
                 this.numbers.push(rnd);
+                }
             }
         },
 
@@ -61,8 +118,9 @@
                 console.log(1);
                 let sum = 0;
 
-                for(var i = 0; i < this.numbers.length;i++) {
-                    sum+=this.numbers[i];
+                for (var i = 0; i < this.numbers.length; i++) {
+                    this.valSumm += i;
+                    sum += this.numbers[i];
                 }
 
                 return sum;
@@ -73,6 +131,9 @@
                 } else {
                     return "Hide message"
                 }
+            },
+            done() {
+                    return this.numbers.length>=this.maxNumbers;
             }
         }
     });
