@@ -1,5 +1,18 @@
 
-var bearsApi = Vue.resource('/blog/bears/');
+var bearsApi = Vue.resource('/blog/bears{/id}');
+
+function findIndex(id, bears) {
+    let i = 0;
+    let index = 0;
+    bears.forEach(function (element) {
+        if (element.id === id) {
+            console.log(i);
+           index = i;
+        }
+        i++;
+    })
+    return index;
+}
 
 Vue.component('input-form', {
     props: ['bears','bearAttr'],
@@ -17,7 +30,6 @@ Vue.component('input-form', {
             this.id = newVal.id
         }
     },
-
     template:
     `<div>
        <hr>
@@ -36,7 +48,8 @@ Vue.component('input-form', {
                 bearsApi.update(bear).then(result =>
                     result.json().then(data => {
                         var index = this.id;
-                        this.bears.splice(index,1,data);
+                        this.bears.splice(findIndex(this.id, this.bears),1,data);
+                        // this.bears.splice(index, 1, Object.assign({},this.bears[index], {param:value}))
                         this.title = '';
                         this.body = '';
                         this.id = '';
@@ -54,47 +67,53 @@ Vue.component('input-form', {
     });
 
 Vue.component('bear-list', {
-    props: ['bears',],
-    data: function() {
-        return {
-            bear: null
-        }
-    },
-    template:
-        `<div>
+        props: ['bears','bearsApi'],
+        data: function () {
+            return {
+                bear: null
+            }
+        },
+        template:
+            `<div>
             <input-form :bears="bears" :bear-attr="bear"/>
             <div class="row">
-                <div class="col-3" v-for="bear in bears" :key="bear.id">
-                    <div class="card" style="width: 18rem;">
-                   
+                <div v-for="(bear, index) in bears" :key="index">                   
                         <div class="card-body">
                             <h5 class="card-title">{{ bear.title }}</h5>
                             <p class="card-text">{{ bear.body }}</p>
+                            <span>{{ bear. id }}</span>
                             <button type="button" class="btn btn-primary" @click="edit(bear)">Изменить</button>
+                            <button type="button" class="btn btn-danger" @click="del(bear)">Удалить</button>
                         </div>
-                    </div>
+                  
                 </div>
             </div>
         </div>`,
-    methods: {
-        edit:function(bear) {
-            this.bear = bear;
-        }
-    },
-    created: function () {
-        bearsApi.get().then(result =>
-            result.json().then(data =>
-                data.forEach(bear => this.bears.push(bear))
+        methods: {
+            edit: function (bear) {
+                this.bear = bear;
+            },
+            del(bear) {
+
+                bearsApi.remove({id: bear.id}).then(result => {
+                    this.bears.splice(findIndex(bear.id,this.bears), 1)
+
+                })
+            }
+        },
+        created: function () {
+            bearsApi.get().then(result =>
+                result.json().then(data =>
+                    data.forEach(bear => this.bears.push(bear))
                 )
             )
-        }
+        },
     }
 );
 
-
 new Vue({
     el:"#app",
-    template: '<bear-list :bears="bears" />',
+    template: `<bear-list :bears="bears" />`,
     data: {
         bears: [
         ],

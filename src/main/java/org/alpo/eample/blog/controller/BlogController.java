@@ -48,4 +48,8 @@ public class BlogController {
         return postRepo.save(post);
     }
 
+    @DeleteMapping(value = "/bears/{id}")
+    public void delete(@PathVariable String id) {
+        postRepo.delete(postRepo.findById(Long.valueOf(id)).get());
+    }
 }
